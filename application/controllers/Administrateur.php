@@ -1,0 +1,51 @@
+<?php
+class Administrateur extends CI_Controller 
+{
+ 
+    public function __construct()
+    { 
+        parent::__construct();
+        $this->load->model('ModeleProduit');
+    
+        /* les méthodes du contrôleur Administrateur doivent n'être
+        accessibles qu'à l'administrateur (Nota Bene : a chaque appel
+        d'une méthode d'Administrateur on a appel d'abord du constructeur */
+        $this->load->library('session');
+        if ($this->session->statut==0) // 0 : statut visiteur
+        {
+            $this->load->helper('url'); // pour utiliser redirect
+            redirect('/visiteur/seConnecter'); // pas les droits : redirection vers connexion
+        }
+    } // __construct
+ 
+    public function ajouterUnProduit()
+    {
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+ 
+        $DonneesInjectees['TitreDeLaPage'] = 'Ajouter un Produit';
+ 
+        // Ci-dessous on 'pose' les règles de validation
+        $this->form_validation->set_rules('txtTitre', 'Titre', 'required');
+        $this->form_validation->set_rules('txtTexte', 'Texte', 'required');
+        // l'image n'est pas obligatoire : pas required
+ 
+        if ($this->form_validation->run() === FALSE)
+        {   // formulaire non validé, on renvoie le formulaire
+            $this->load->view('templates/Entete');
+            $this->load->view('administrateur/ajouterUnProduit', $DonneesInjectees);
+            $this->load->view('templates/PiedDePage');
+        }
+        else
+        {
+            $donneesAInserer = array(
+            'LIBELLE' => $this->input->post('txtTitre'),
+            'DETAIL' => $this->input->post('txtTexte'),
+            'NOMIMAGE' => $this->input->post('txtNomFichierImage')
+            ); // cTitre, cTexte, cNomFichierImage : champs de la table tabProduit
+            $this->ModeleProduit->insererUnProduit($donneesAInserer); // appel du modèle
+            $this->load->helper('url'); // helper chargé pour utilisation de site_url (dans la vue)
+            $this->load->view('administrateur/insertionReussie');
+        }
+    } // ajouterUnProduit
+}
