@@ -21,18 +21,17 @@ class Administrateur extends CI_Controller
     public function ajouterUnProduit()
     {
         $this->load->helper('form');
-        $this->load->library('form_validation');
+        //$this->load->library('form_validation');
  
         $DonneesInjectees['TitreDeLaPage'] = 'Ajouter un Produit';
  
         // Ci-dessous on 'pose' les règles de validation
-        $this->form_validation->set_rules('txtTitre', 'Titre', 'required');
-        $this->form_validation->set_rules('txtTexte', 'Texte', 'required');
+        //$this->form_validation->set_rules('txtTitre', 'Titre', 'required');
+        //$this->form_validation->set_rules('txtTexte', 'Texte', 'required');
         // l'image n'est pas obligatoire : pas required
  
-        if ($this->form_validation->run() === FALSE)
+        if ($this->input->post('insererProduit'))
         {   // formulaire non validé, on renvoie le formulaire
-            $this->load->view('templates/Entete');
             $this->load->view('administrateur/ajouterUnProduit', $DonneesInjectees);
             $this->load->view('templates/PiedDePage');
         }

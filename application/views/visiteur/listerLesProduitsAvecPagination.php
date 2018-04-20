@@ -2,7 +2,7 @@
 <!-- données récupérées en 'mode objet' -->
  
 <?php foreach ($lesProduits as $unProduit):
-     echo '<h3>'.anchor('visiteur/voirUnProduit/'.$unProduit->cNo,$unProduit->cTitre).'</h3>';
+     echo '<h3>'.anchor('visiteur/voirUnProduit/'.$unProduit->NOPRODUIT,$unProduit->LIBELLE).'</h3>';
 endforeach ?>
  
 <p>Pour avoir afficher le détail d'un produit, cliquer sur son titre</p>

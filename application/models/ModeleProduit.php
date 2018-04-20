@@ -44,5 +44,15 @@ class ModeleProduit extends CI_Model
     { // méthode utilisée pour la pagination
         return $this->db->count_all("PRODUIT");        
     } // nombreDProduits
-    
+    public function retournerProduitsRecherche($pProduitRecherche = NULL)
+    {
+        if ($pProduitRecherche === NULL) // pas de n° de produit en paramètre
+        {  // on retourne tous les produits
+            $requete = $this->db->get('PRODUIT');
+            return $requete->result_array(); // retour d'un tableau associatif
+        }
+        // ici on va chercher le produit dont l'id est $pNoProduit
+        $requete = $this->db->like('PRODUIT', array('LIBELLE' => $pProduitRecherche));
+        return $requete->result_array(); // re  
+    }
 } // Fin Classe

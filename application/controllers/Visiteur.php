@@ -10,14 +10,14 @@ class Visiteur extends CI_Controller
         $this->load->library("pagination");
         $this->load->model('ModeleProduit'); // chargement modèle, obligatoire
         $this->load->model('ModeleClient');
+        $this->load->model('ModeleCategorie'); 
+        $this->load->view('templates/Entete');
     } // __construct
  
     public function listerLesProduits() // lister tous les Produits
     {
         $DonneesInjectees['lesProduits'] = $this->ModeleProduit->retournerProduits();
         $DonneesInjectees['TitreDeLaPage'] = 'Tous les Produits';
- 
-        $this->load->view('templates/Entete');
         $this->load->view('visiteur/listerLesProduits', $DonneesInjectees);
         $this->load->view('templates/PiedDePage');
     } // listerLesProduits
@@ -32,58 +32,35 @@ class Visiteur extends CI_Controller
           
         $DonneesInjectees['TitreDeLaPage'] = $DonneesInjectees['unProduit']['LIBELLE'];   
         // ci-dessus, entrée ['LIBELLE'] de l'entrée ['unProduit'] de $DonneesInjectees          
-        $this->load->view('templates/Entete');
         $this->load->view('visiteur/VoirUnProduit', $DonneesInjectees);   
         $this->load->view('templates/PiedDePage');   
     } // voirUnProduit   
 
     public function seConnecter()
     {   
-        $this->load->helper('form');   
-        $this->load->library('form_validation');  
-       
-        $DonneesInjectees['TitreDeLaPage'] = 'Se connecter';   
-       
-        $this->form_validation->set_rules('txtEmail', 'Email', 'required');   
-        $this->form_validation->set_rules('txtMotDePasse', 'Mot de passe', 'required');   
-        // Les champs txtEmail et txtMotDePasse sont requis   
-        // Si txtMotDePasse non renseigné envoi de la chaine 'Mot de passe' requis
-           
-        if ($this->form_validation->run() === FALSE)   
-        {  // échec de la validation   
-            // cas pour le premier appel de la méthode : formulaire non encore appelé   
-            $this->load->view('templates/Entete');   
-            $this->load->view('visiteur/seConnecter', $DonneesInjectees); // on renvoie le formulaire   
-            $this->load->view('templates/PiedDePage');   
-        }   
-        else   
-        {  // formulaire validé   
+        $this->load->helper('form');           
+        $DonneesInjectees['TitreDeLaPage'] = 'Se connecter';    
             $Client = array( // EMAIL, MOTDEPASSE : champs de la table client   
             'EMAIL' => $this->input->post('txtEmail'),   
             'MOTDEPASSE' => $this->input->post('txtMotDePasse'),   
             ); // on récupère les données du formulaire de connexion   
        
-            // on va chercher le client correspondant aux Id et MdPasse saisis   
+            // on va chercher le client correspondant a l'email et MdPasse saisis   
             $ClientRetourne = $this->ModeleClient->retournerClient($Client);   
             if (!($ClientRetourne == null))   
             {    // on a trouvé, email et profil (droit) sont stockés en session  
                 $this->load->library('session');   
                 $this->session->email = $ClientRetourne->EMAIL;   
                 $this->session->profil = $ClientRetourne->PROFIL;   
-       
                 $DonneesInjectees['Email'] = $Client['EMAIL'];   
-                $this->load->view('templates/Entete');   
                 $this->load->view('visiteur/connexionReussie', $DonneesInjectees);   
                 $this->load->view('templates/PiedDePage');   
             }   
             else   
             {    // client non trouvé on renvoie le formulaire de connexion   
-                $this->load->view('templates/Entete');   
                 $this->load->view('visiteur/seConnecter', $DonneesInjectees);   
                 $this->load->view('templates/PiedDePage');   
             }     
-       
-        }
     } // fin seConnecter
 
     public function seDeConnecter() 
@@ -116,19 +93,48 @@ class Visiteur extends CI_Controller
         $DonneesInjectees['TitreDeLaPage'] = 'Les Produits, avec pagination';
         $DonneesInjectees["lesProduits"] = $this->ModeleProduit->retournerProduitsLimite($config["per_page"], $noPage);
         $DonneesInjectees["liensPagination"] = $this->pagination->create_links();
-  
-        $this->load->view('templates/Entete');
+
         $this->load->view("visiteur/listerLesProduitsAvecPagination", $DonneesInjectees);
         $this->load->view('templates/PiedDePage');
     } // fin listerLesProduitsAvecPagination
 
     public function listerLesCategories()
     {
-        $DonneesInjectees['lesCategories'] = $this->ModeleProduit->retournerCategories();
+        $DonneesInjectees['lesCategories'] = $this->ModeleCategorie->retournerCategories();
         $DonneesInjectees['TitreDeLaPage'] = 'Toutes les Categories';
- 
-        $this->load->view('templates/Entete');
         $this->load->view('visiteur/listerLesCategories', $DonneesInjectees);
         $this->load->view('templates/PiedDePage');
+    }
+    public function voirUneCategorie($noCategorie = NULL) // valeur par défaut de noCategorie = NULL
+    {   
+        $DonneesInjectees['lesProduitsDansCategorie'] = $this->ModeleCategorie->produitsDansCategorie($noCategorie);          
+        if (empty($DonneesInjectees['lesProduitsDansCategorie']))   
+        {   // pas de produit correspondant au n° de categorie   
+            show_404();   
+        }
+        $DonneesInjectees['TitreDeLaPage'] = 'Les Produits';
+        $this->load->view('visiteur/voirUneCategorie', $DonneesInjectees);
+        $this->load->view('templates/PiedDePage');   
+    }
+    public function rechercherProduit($produitRecherche=NULL)
+    {
+                 
+        /*$DonneesInjectees['TitreDeLaPage'] = 'Se connecter';    
+            $Client = array(
+            'EMAIL' => $this->input->post('txtEmail'),   
+            'MOTDEPASSE' => $this->input->post('txtMotDePasse'),   
+            ); // on récupère les données du formulaire de connexion   
+       
+            // on va chercher le client correspondant a l'email et MdPasse saisis   
+            $ClientRetourne = $this->ModeleClient->retournerClient($Client); */
+
+        $DonneesInjectees['lesProduitsRecherche'] = $this->ModeleProduit->retournerProduitsRecherche($produitRecherche);          
+        if (empty($DonneesInjectees['lesProduitsRecherche']))   
+        {   // pas de produit correspondant au n° de categorie   
+            show_404();   
+        }
+        $DonneesInjectees['TitreDeLaPage'] = 'Resultat de recherche';
+        $this->load->view('visiteur/listerProduitRecherche', $DonneesInjectees);
+        $this->load->view('templates/PiedDePage');      
     }
 }  // Visiteur
