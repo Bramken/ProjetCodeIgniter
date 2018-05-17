@@ -31,6 +31,15 @@ if ( ! function_exists('img'))
     return '<img src="' . img_url($nom) . '" alt="' . $alt . '" />';
   }
 }
+
+if ( ! function_exists('glyph'))
+{
+  function glyph($nom)
+  {
+    return base_url() . 'assets/css/glyphicons/png/' . $nom . '.png';
+  }
+}
+
 function css_url_zip($nom)
   {
     return base_url() . 'assets/css/' . $nom . '.zip';

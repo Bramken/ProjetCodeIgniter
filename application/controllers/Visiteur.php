@@ -116,25 +116,48 @@ class Visiteur extends CI_Controller
         $this->load->view('visiteur/voirUneCategorie', $DonneesInjectees);
         $this->load->view('templates/PiedDePage');   
     }
-    public function rechercherProduit($produitRecherche=NULL)
+    public function listerProduitRecherche()
     {
-                 
-        /*$DonneesInjectees['TitreDeLaPage'] = 'Se connecter';    
-            $Client = array(
-            'EMAIL' => $this->input->post('txtEmail'),   
-            'MOTDEPASSE' => $this->input->post('txtMotDePasse'),   
-            ); // on récupère les données du formulaire de connexion   
-       
-            // on va chercher le client correspondant a l'email et MdPasse saisis   
-            $ClientRetourne = $this->ModeleClient->retournerClient($Client); */
-
-        $DonneesInjectees['lesProduitsRecherche'] = $this->ModeleProduit->retournerProduitsRecherche($produitRecherche);          
-        if (empty($DonneesInjectees['lesProduitsRecherche']))   
-        {   // pas de produit correspondant au n° de categorie   
-            show_404();   
-        }
-        $DonneesInjectees['TitreDeLaPage'] = 'Resultat de recherche';
-        $this->load->view('visiteur/listerProduitRecherche', $DonneesInjectees);
-        $this->load->view('templates/PiedDePage');      
+        $this->load->helper('form');           
+        $DonneesInjectees['TitreDeLaPage'] = 'Resultat de recherche';    
+        $produitRecherche = $this->input->post('txtProduitRecherche'); // on récupère les données du formulaire de recherche   
+        $DonneesInjectees['ResultatRecherche']= $this->ModeleProduit->retournerProduitRecherche($produitRecherche);        
+        $this->load->view('visiteur/listerProduitRecherche', $DonneesInjectees);   
+        $this->load->view('templates/PiedDePage');                        
+    }
+    public function ajouterProduitPanier()
+    {
+        $data = array(
+            'id'      =>$this->input->post('noProduit'),
+            'qty'     => 1,
+            'price'   =>$this->input->post('prixHT'),
+            'name'    =>$this->input->post('libelleProduit'),
+            'options' => array('Size' => 'L', 'Color' => 'Red')
+        );
+    $this->cart->insert($data);   
+    $DonneesInjectees['unProduit'] = $this->ModeleProduit->retournerProduits($this->input->post('noProduit'));
+    $DonneesInjectees['TitreDeLaPage'] = $DonneesInjectees['unProduit']['LIBELLE'];            
+    $this->load->view('visiteur/voirUnProduit', $DonneesInjectees);   
+    $this->load->view('templates/PiedDePage');   
+    
+    }
+    public function afficherPanier()
+    {
+        $this->load->view('visiteur/afficherPanier');
+        $this->load->view('templates/PiedDePage');
+    }
+    public function  updatePanier()
+    {
+        $i=1;
+        foreach ($this->cart->contents() as $items):
+            $items=array(
+                'rowid'   => $items['rowid'],
+                'qty'     => $this->input->post($i.'[qty]')
+            );
+            $this->cart->update($items);
+            ++$i;
+        endforeach;
+        $this->load->view('visiteur/afficherPanier');
+        $this->load->view('templates/PiedDePage');
     }
 }  // Visiteur

@@ -19,6 +19,14 @@
             </button>
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Produits</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduits') ?>">Lister tous les Produits</a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduitsAvecPagination') ?>">Lister les Produits (par 3)</a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesCategories') ?>">Lister toutes les Categories</a>
+                        </div>
+                    </li>
                     <?php if (!is_null($this->session->email)) : ?>
                     <li class="nav-item">
                         <a class="nav-link disabled" href=""><?php echo 'Utilisateur connecté : <B>'.$this->session->email.'</B>';?></a>
@@ -36,18 +44,15 @@
                         <a class="nav-link" href="<?php echo site_url('visiteur/seConnecter') ?>">Se Connecter</a>
                     </li>
                     <?php endif; ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Produits</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduits') ?>">Lister tous les Produits</a>
-                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduitsAvecPagination') ?>">Lister les Produits (par 3)</a>
-                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesCategories') ?>">Lister toutes les Categories</a>
-                        </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo site_url('visiteur/afficherPanier') ?>">
+                        <img src=<?php echo glyph('glyphicons-203-shopping-cart') ?>>
+                        </a>
                     </li>
                 </ul>
             </div>                      
             <?php 
-                echo form_open("/visiteur/rechercherProduit",array('class'=>'form-inline my-2 my-lg-0')); 
+                echo form_open("/visiteur/listerProduitRecherche",array('class'=>'form-inline my-2 my-lg-0')); 
                 echo form_input(array('name'=>'txtProduitRecherche','class'=>'form-control','type'=>'text','placeholder'=>'Search'));
                 echo form_submit(array('name'=>'btnRecherche','class'=>'btn btn-success','type'=>'submit','value'=>'Rechercher'));
                 echo form_close();          
