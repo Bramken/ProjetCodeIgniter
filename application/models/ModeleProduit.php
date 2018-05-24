@@ -5,6 +5,7 @@ class ModeleProduit extends CI_Model
     public function __construct()
     {
     $this->load->database();
+    $this->load->library('session');
     /* chargement database.php (dans config), obligatoirement dans le constructeur */
     }
 
@@ -47,11 +48,39 @@ class ModeleProduit extends CI_Model
 
     public function retournerProduitRecherche($pProduitRecherche)
     {
-        $this->db->select('NOPRODUIT,LIBELLE');
+        $this->db->select('*');
         $this->db->from('PRODUIT');
         $this->db->like ('LIBELLE',$pProduitRecherche);
         $requete = $this->db->get();
         //$query = $this->db->query('SELECT NOPRODUIT,LIBELLE FROM PRODUIT WHERE LIBELLE LIKE $'.$pProduitRecherche.'$');
         return $requete->result_array();
+    }
+    public function insererCommande()
+    {
+        $noProduit =(array(
+            'NOCLIENT'=>$this->session->noClient));
+        $this->db->insert('COMMANDE',$noProduit);
+        $id= $this->db->insert_id();
+        return  $id;
+    }
+    public function insererLigneCommande($pDonneesAInserer)
+    {
+        $this->db->insert('LIGNE', $pDonneesAInserer);
+    }
+    public function updateUnProduit($pDonneesAInserer,$pNoProduit)
+    {
+        $this->db->where('NOPRODUIT', $pNoProduit);
+        $this->db->update('PRODUIT', $pDonneesAInserer);
+    }
+    public function retournerCommandes($pNoProduit = FALSE)
+    {
+        if ($pNoProduit === FALSE) // pas de n° de produit en paramètre
+        {  // on retourne tous les produits
+            $requete = $this->db->query("select NOCOMMANDE,COMMANDE.NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT");
+            return $requete->result_array(); // retour d'un tableau associatif
+        }
+        // ici on va chercher le produit dont l'id est $pNoProduit
+        $requete = $this->db->query("select NOCOMMANDE,NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT AND NOCOMMANDE=");
+        return $requete->row_array(); // retour d'un tableau associatif
     }
 } // Fin Classe

@@ -13,6 +13,16 @@ class ModeleClient extends CI_Model
         $this->db->from('CLIENT');
         return $this->db->count_all_results(); // nombre de ligne retournées par la requeête
     } // existe
+
+    public function insererUnClient($pDonneesAInserer)
+    {
+        $this->db->query("select EMAIL from CLIENT where EMAIL ='".$pDonneesAInserer['EMAIL']."'");
+        //$this->db->where($pDonneesAInserer['EMAIL']);
+        //$this->db->from('CLIENT');
+        $inserer= $this->db->count_all_results();
+        if($inserer==0)
+            return $this->db->insert('CLIENT', $pDonneesAInserer);
+    } // insererUnProduit
   
     public function retournerClient($pClient)
     {

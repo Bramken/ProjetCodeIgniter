@@ -51,7 +51,8 @@ class Visiteur extends CI_Controller
             {    // on a trouvé, email et profil (droit) sont stockés en session  
                 $this->load->library('session');   
                 $this->session->email = $ClientRetourne->EMAIL;   
-                $this->session->profil = $ClientRetourne->PROFIL;   
+                $this->session->profil = $ClientRetourne->PROFIL;  
+                $this->session->noClient = $ClientRetourne->NOCLIENT; 
                 $DonneesInjectees['Email'] = $Client['EMAIL'];   
                 $this->load->view('visiteur/connexionReussie', $DonneesInjectees);   
                 $this->load->view('templates/PiedDePage');   
@@ -65,7 +66,8 @@ class Visiteur extends CI_Controller
 
     public function seDeConnecter() 
     { // destruction de la session = déconnexion
-        $this->session->sess_destroy();    
+        $this->session->sess_destroy();
+        redirect('/visiteur/listerLesProduits');
     }
 
     // affichage avec pagination
@@ -78,11 +80,31 @@ class Visiteur extends CI_Controller
         $config["per_page"] = 3; // nombre d'Produits par page
         $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI,
         pour la page 4 on aura : visiteur/listerLesProduitsAvecPagination/4   */
-   
+
+        /*$config['full_tag_open'] = '<div class="pagination"><ul>';
+        $config['full_tag_close'] = '</ul></div><!--pagination-->';*/
+
         $config['first_link'] = 'Premier';
+        //$config['first_tag_open'] = '<li class="page-item"><a class="page-link" href="#">';
+        //$config['first_tag_close'] = '</a></li>';
+
         $config['last_link'] = 'Dernier';
+        //$config['last_tag_open'] = '<li class="page-item"><a class="page-link" href="#">';
+        //$config['last_tag_close'] = '</a></li>';
+
         $config['next_link'] = 'Suivant';
+        //$config['next_tag_open'] = '<li class="page-item"><a class="page-link" href="#">';
+        //$config['next_tag_close'] = '</a></li>';
+
         $config['prev_link'] = 'Précédent';
+        //$config['prev_tag_open'] = '<li class="page-item"><a class="page-link" href="#">';
+       //$config['prev_tag_close'] = '</a></li>';
+
+        /*$config['cur_tag_open'] = '<li class="active"><a href="">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';*/
+
   
         $this->pagination->initialize($config);
   
@@ -127,17 +149,25 @@ class Visiteur extends CI_Controller
     }
     public function ajouterProduitPanier()
     {
+        $unProduit=$this->ModeleProduit->retournerProduits($this->input->post('noProduit'));
         $data = array(
-            'id'      =>$this->input->post('noProduit'),
+            'id'      =>$unProduit['NOPRODUIT'],
             'qty'     => 1,
-            'price'   =>$this->input->post('prixHT'),
-            'name'    =>$this->input->post('libelleProduit'),
-            'options' => array('Size' => 'L', 'Color' => 'Red')
+            'price'   =>$unProduit['PRIXHT'],
+            'name'    =>$unProduit['LIBELLE'],
+            'options' => array('nomimage' => $unProduit['NOMIMAGE'])
         );
-    $this->cart->insert($data);   
-    $DonneesInjectees['unProduit'] = $this->ModeleProduit->retournerProduits($this->input->post('noProduit'));
-    $DonneesInjectees['TitreDeLaPage'] = $DonneesInjectees['unProduit']['LIBELLE'];            
-    $this->load->view('visiteur/voirUnProduit', $DonneesInjectees);   
+    $this->cart->insert($data); 
+    
+    redirect('/visiteur/listerLesProduits');
+    
+    //$DonneesInjectees['lesProduits'] = $this->ModeleProduit->retournerProduits();
+    //$DonneesInjectees['TitreDeLaPage'] ='Tous les produits';            
+    //$this->load->view('visiteur/listerLesProduits', $DonneesInjectees);   
+
+    //$DonneesInjectees['unProduit'] = $this->ModeleProduit->retournerProduits($this->input->post('noProduit'));
+    //$DonneesInjectees['TitreDeLaPage'] = $DonneesInjectees['unProduit']['LIBELLE'];            
+    //$this->load->view('visiteur/voirUnProduit', $DonneesInjectees);   
     $this->load->view('templates/PiedDePage');   
     
     }
@@ -160,4 +190,61 @@ class Visiteur extends CI_Controller
         $this->load->view('visiteur/afficherPanier');
         $this->load->view('templates/PiedDePage');
     }
+    public function ajouterUnClient()
+    {
+        $this->load->helper('form');
+        $DonneesInjectees['TitreDeLaPage'] = "S'enregistrer";
+ 
+        if ($this->input->post('BoutonAjouter'))
+        {   // formulaire non validé, on renvoie le formulaire
+            $donneesAInserer = array(
+                //NOCLIENT
+                'NOM'=> $this->input->post('txtNom'),
+                'PRENOM'=> $this->input->post('txtPrenom'),
+                'ADRESSE'=> $this->input->post('txtAdresse'),
+                'VILLE'=> $this->input->post('txtVille'),
+                'CODEPOSTAL'=> $this->input->post('txtCodePostal'),
+                'EMAIL'=> $this->input->post('txtEmail'),
+                'MOTDEPASSE'=> $this->input->post('txtMotDePasse'),
+            ); // NOM, PRENOM, ADRESSE : champs de la table CLIENT
+            if ($this->ModeleClient->insererUnClient($donneesAInserer)); // appel du modèle
+            {
+                $this->load->view('administrateur/insertionReussie');   
+            }
+        }
+        else
+        {   
+            $this->load->view('visiteur/ajouterUnClient', $DonneesInjectees);
+            $this->load->view('templates/PiedDePage');
+        }
+    } // ajouterUnProduit
+    public function passerCommande()
+    {
+        $this->load->library('email');
+        $noProduit =(array(
+            'NOCLIENT'=>$this->input->post('noClient')));
+        $numeroCommande=$this->ModeleProduit->insererCommande(); // appel du modèle
+        $i=1;
+        foreach ($this->cart->contents() as $items):
+            $donneesAInserer['NOCOMMANDE']=$numeroCommande;
+            $donneesAInserer['NOPRODUIT']=$items['id'];
+            $donneesAInserer['QUANTITECOMMANDEE']=$items['qty'];
+            $this->ModeleProduit->insererLigneCommande($donneesAInserer);
+            ++$i;
+        endforeach;
+        
+        $this->email->from('bramkendepannage@gmail.com', 'Victor Guillemot');
+        $this->email->to('guillemotvictor@gmail.com'); 
+        $this->email->subject('Confirmation de votre commande !');
+        $this->email->message('Merci pour votre achat !'.'<br/>'.'A bientôt chez le Spiritueux shop !');	
+        if (!$this->email->send())
+        {
+            $this->email->print_debugger();
+        }
+        $this->cart->destroy();
+        redirect('/visiteur/listerLesProduits');
+        $this->load->view('templates/PiedDePage');
+
+    }
+    
 }  // Visiteur

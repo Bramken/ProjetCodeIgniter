@@ -11,7 +11,7 @@
     <body>
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">                            
             <a class="navbar-brand" href="#">
-                <img src=<?php echo img_url("logo.jpg") ?> alt="logo" style="width:40px;">
+                <!--<img src=<?php echo img_url("logo.jpg") ?> alt="logo" style="width:40px;">-->
                 Spiritueux de legende
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -20,44 +20,74 @@
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Produits</a>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><img src=<?php echo glyph('glyphicons-1-glass') ?>> Produits</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduits') ?>">Lister tous les Produits</a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduits') ?>">Tous les Produits</a>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduitsAvecPagination') ?>">Lister les Produits (par 3)</a>
-                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesCategories') ?>">Lister toutes les Categories</a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesCategories') ?>">Par Categories</a>
                         </div>
                     </li>
-                    <?php if (!is_null($this->session->email)) : ?>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><img src=<?php echo glyph('glyphicons-4-user') ?>> Compte</a>
+                        <div class="dropdown-menu">
+                            <?php if (!is_null($this->session->email)) : ?>                     
+                            <a class="dropdown-item" href=""><?php echo 'Utilisateur connecté : <B>'.$this->session->email.'</B>';?></a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/seDeconnecter') ?>">
+                                <img src=<?php echo glyph('glyphicons-388-log-out') ?>> Log out
+                            </a>
+                            <?php if ($this->session->profil==('admin')) : ?>
+                            <a class="dropdown-item" href="<?php echo site_url('administrateur/ajouterUnProduit') ?>">Ajouter un produit</a></a>
+                            <a class="dropdown-item" href="<?php echo site_url('administrateur/afficherLesCommandes') ?>">Afficher les commandes</a></a>
+                            <?php endif; ?>
+                            <?php else : ?>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/seConnecter') ?>">
+                                <img src=<?php echo glyph('glyphicons-387-log-in') ?>> Log in   
+                            </a>
+                            <a class="dropdown-item" href="<?php echo site_url('visiteur/ajouterUnClient') ?>">
+                                <img src=<?php echo glyph('glyphicons-7-user-add') ?>> S'enregistrer
+                            </a>
+                            <?php endif; ?>                    
+                        </div>
+                    </li>
+                    
+                    <!--<?php if (!is_null($this->session->email)) : ?>
                     <li class="nav-item">
                         <a class="nav-link disabled" href=""><?php echo 'Utilisateur connecté : <B>'.$this->session->email.'</B>';?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/seDeconnecter') ?>">Se déconnecter</a>
+                        <a class="nav-link" href="<?php echo site_url('visiteur/seDeconnecter') ?>">
+                            Log out<img src=<?php echo glyph('glyphicons-388-log-out') ?>>
+                        </a>
                     </li>
-                    <?php if ($this->session->profil==1) : ?>
+                    <?php if ($this->session->profil==('admin')) : ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('administrateur/ajouterUnProduit') ?>">Ajouter un produit</a></a>
                     </li>
                     <?php endif; ?>
                     <?php else : ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/seConnecter') ?>">Se Connecter</a>
+                        <a class="nav-link" href="<?php echo site_url('visiteur/seConnecter') ?>">
+                            <img src=<?php echo glyph('glyphicons-387-log-in') ?>>
+                        </a>
                     </li>
                     <?php endif; ?>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?php echo site_url('visiteur/ajouterUnClient') ?>">
+                            S'engregistrer
+                        </a>
+                    </li>-->
+                    <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('visiteur/afficherPanier') ?>">
-                        <img src=<?php echo glyph('glyphicons-203-shopping-cart') ?>>
+                            <img src=<?php echo glyph('glyphicons-203-shopping-cart') ?>> Panier
                         </a>
                     </li>
                 </ul>
             </div>                      
-            <?php 
+            <span> <?php 
                 echo form_open("/visiteur/listerProduitRecherche",array('class'=>'form-inline my-2 my-lg-0')); 
-                echo form_input(array('name'=>'txtProduitRecherche','class'=>'form-control','type'=>'text','placeholder'=>'Search'));
+                echo form_input(array('name'=>'txtProduitRecherche','class'=>'form-control','type'=>'search','placeholder'=>'Search'));
                 echo form_submit(array('name'=>'btnRecherche','class'=>'btn btn-success','type'=>'submit','value'=>'Rechercher'));
-                echo form_close();          
-            ?>          
+                echo form_close();?>
+            </span>          
         </nav>
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
