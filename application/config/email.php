@@ -11,7 +11,7 @@ $config['useragent']    = 'CodeIgniter';
 $config['protocol']     = 'smtp';
 $config['smtp_host']    = 'ssl://smtp.gmail.com';
 $config['smtp_user']    = 'bramkendepannage@gmail.com'; 
-$config['smtp_pass']    = 'Artikodin3804'; 
+$config['smtp_pass']    = 'ProjetSiteMarchand'; 
 $config['smtp_port']	= '465';
 $config['wordwrap']     = TRUE;    
 $config['wrapchars']    = 76;
@@ -21,4 +21,3 @@ $config['validate']     = FALSE;
 $config['priority']     = 3;
 $config['newline']      = "\r\n";
 $config['crlf']         = "\r\n";
-?>

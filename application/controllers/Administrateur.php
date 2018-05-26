@@ -32,13 +32,13 @@ class Administrateur extends CI_Controller
         {   // formulaire non validé, on renvoie le formulaire
             $donneesAInserer = array(
                 'LIBELLE' => $this->input->post('txtTitre'),
+                'DETAIL' => $this->input->post('txtDetail'),
+                'NOMIMAGE' => $this->input->post('txtNomFichierImage'),
                 'NOCATEGORIE'=>$this->input->post('txtCategorie'),
                 'NOMARQUE'=>$this->input->post('txtMarque'),
-                'DETAIL' => $this->input->post('txtDetail'),
-                'PRIXHT'=> $this->input->post('txtPrixHT'),
                 'QUANTITEENSTOCK'=> $this->input->post('txtQuantite'),
-                'DATEAJOUT'=> $this->input->post('txtDateAjout'),
-                'NOMIMAGE' => $this->input->post('txtNomFichierImage')
+                'PRIXHT'=> $this->input->post('txtPrixHT'),              
+                'DATEAJOUT'=> $this->input->post('txtDateAjout')  
             ); // cTitre, cTexte, cNomFichierImage : champs de la table tabProduit
             $this->ModeleProduit->insererUnProduit($donneesAInserer); // appel du modèle
             $this->load->view('administrateur/insertionReussie');   
@@ -66,7 +66,12 @@ class Administrateur extends CI_Controller
             $donneesAInserer = array(
                 'LIBELLE' => $this->input->post('txtTitre'),
                 'DETAIL' => $this->input->post('txtDetail'),
-                'NOMIMAGE' => $this->input->post('txtNomFichierImage')
+                'NOMIMAGE' => $this->input->post('txtNomFichierImage'),
+                'NOCATEGORIE' => $this->input->post('txtCategorie'),
+                'NOMARQUE' => $this->input->post('txtMarque'),
+                'QUANTITEENSTOCK' => $this->input->post('txtQuantite'),
+                'PRIXHT' => $this->input->post('txtPrixHT'),
+                'DISPONIBLE' => $this->input->post('txtDisponible')
             ); // cTitre, cTexte, cNomFichierImage : champs de la table tabProduit
             $this->ModeleProduit->updateUnProduit($donneesAInserer,$noProduit); // appel du modèle
             $this->load->view('administrateur/insertionReussie');   
@@ -83,5 +88,42 @@ class Administrateur extends CI_Controller
         $DonneesInjectees['TitreDeLaPage'] = 'Toutes les commandes';
         $this->load->view('administrateur/afficherlescommandes', $DonneesInjectees);
         $this->load->view('templates/PiedDePage');
+    }
+
+    public function voirUneCommande($noCommande)
+    {
+        $DonneesInjectees['uneCommande'] = $this->ModeleProduit->retournerLignesCommandeAAfficher($noCommande);          
+            $DonneesInjectees['TitreDeLaPage'] = 'Produits dans la commande ';   
+            // ci-dessus, entrée ['LIBELLE'] de l'entrée ['unProduit'] de $DonneesInjectees          
+            $this->load->view('administrateur/voirUneCommande', $DonneesInjectees);   
+            $this->load->view('templates/PiedDePage'); 
+    }
+
+    public function validerCommande()
+    {
+        $donneesAInserer = array(
+            'DATETRAITEMENT' => date('Y-m-d H:i:s')
+        );
+        $this->ModeleProduit->insererValidationCommande($donneesAInserer);
+        $lesLignes = $this->ModeleProduit->retournerLignesCommande($this->input->post("noCommande"));
+        $i=1;
+        foreach ($lesLignes as $uneLigne):
+            $unProduit=$this->ModeleProduit->retournerProduits($uneLigne['NOPRODUIT']);
+            $nouvelleQuantite= ($unProduit['QUANTITEENSTOCK'])-($uneLigne['QUANTITECOMMANDEE']);
+            $donneesAInserer = array(
+                'QUANTITEENSTOCK' => $nouvelleQuantite
+                );
+            $this->ModeleProduit->updateUnProduit($donneesAInserer,$uneLigne['NOPRODUIT']);  
+            ++$i;
+        endforeach;
+        redirect('/administrateur/afficherLesCommandes');
+    }
+    public function rendreProduitIndisponible($noProduit)
+    {
+
+    }
+    public function rendreProduitDisponible($noProduit)
+    {
+        
     }
 }

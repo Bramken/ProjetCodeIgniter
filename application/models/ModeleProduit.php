@@ -26,6 +26,12 @@ class ModeleProduit extends CI_Model
         return $this->db->insert('PRODUIT', $pDonneesAInserer);
     } // insererUnProduit
 
+    public function updateUnProduit($pDonneesAInserer,$pNoProduit)
+    {
+        $this->db->where('NOPRODUIT', $pNoProduit);
+        $this->db->update('PRODUIT', $pDonneesAInserer);
+    }
+
     public function retournerProduitsLimite($nombreDeLignesARetourner, $noPremiereLigneARetourner)
     {// Nota Bene : surcharge non supportée par PHP    
         $this->db->limit($nombreDeLignesARetourner, $noPremiereLigneARetourner);    
@@ -67,20 +73,26 @@ class ModeleProduit extends CI_Model
     {
         $this->db->insert('LIGNE', $pDonneesAInserer);
     }
-    public function updateUnProduit($pDonneesAInserer,$pNoProduit)
+    
+    public function retournerCommandes()
     {
-        $this->db->where('NOPRODUIT', $pNoProduit);
-        $this->db->update('PRODUIT', $pDonneesAInserer);
-    }
-    public function retournerCommandes($pNoProduit = FALSE)
-    {
-        if ($pNoProduit === FALSE) // pas de n° de produit en paramètre
-        {  // on retourne tous les produits
-            $requete = $this->db->query("select NOCOMMANDE,COMMANDE.NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT");
+            $requete = $this->db->query("select NOCOMMANDE,COMMANDE.NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT ORDER BY NOCOMMANDE ASC");
             return $requete->result_array(); // retour d'un tableau associatif
-        }
-        // ici on va chercher le produit dont l'id est $pNoProduit
-        $requete = $this->db->query("select NOCOMMANDE,NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT AND NOCOMMANDE=");
-        return $requete->row_array(); // retour d'un tableau associatif
+    }
+    public function retournerLignesCommande($pNoCommande)
+    {
+        $requete = $this->db->query("select * from LIGNE where NOCOMMANDE=".$pNoCommande);
+        return $requete->result_array(); // retour d'un tableau associatif
+    }
+    public function retournerLignesCommandeAAfficher($pNoCommande)
+    {
+        $requete = $this->db->query("select LIBELLE, QUANTITECOMMANDEE from LIGNE,PRODUIT where NOCOMMANDE=".$pNoCommande." AND LIGNE.NOPRODUIT=PRODUIT.NOPRODUIT" );
+        return $requete->result_array(); // retour d'un tableau associatif
+    }
+
+    public function insererValidationCommande($pDonneesAInserer)
+    {
+        $this->db->where('NOCOMMANDE', $this->input->post("noCommande"));
+        return $this->db->update('COMMANDE', $pDonneesAInserer);
     }
 } // Fin Classe

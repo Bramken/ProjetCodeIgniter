@@ -9,7 +9,7 @@
                 <th>Image</th>
                 <th>Détail du produit</th>
                 <th style="text-align:right">Prix du produit</th>
-                <th style="text-align:right">Sub-Total</th>
+                <th style="text-align:right">Total</th>
         </tr>
         <?php $i = 1; ?>
         <?php foreach ($this->cart->contents() as $items): ?>

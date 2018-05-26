@@ -219,32 +219,47 @@ class Visiteur extends CI_Controller
         }
     } // ajouterUnProduit
     public function passerCommande()
-    {
-        $this->load->library('email');
-        $noProduit =(array(
-            'NOCLIENT'=>$this->input->post('noClient')));
-        $numeroCommande=$this->ModeleProduit->insererCommande(); // appel du modèle
-        $i=1;
-        foreach ($this->cart->contents() as $items):
-            $donneesAInserer['NOCOMMANDE']=$numeroCommande;
-            $donneesAInserer['NOPRODUIT']=$items['id'];
-            $donneesAInserer['QUANTITECOMMANDEE']=$items['qty'];
-            $this->ModeleProduit->insererLigneCommande($donneesAInserer);
-            ++$i;
-        endforeach;
-        
-        $this->email->from('bramkendepannage@gmail.com', 'Victor Guillemot');
-        $this->email->to('guillemotvictor@gmail.com'); 
-        $this->email->subject('Confirmation de votre commande !');
-        $this->email->message('Merci pour votre achat !'.'<br/>'.'A bientôt chez le Spiritueux shop !');	
-        if (!$this->email->send())
+    {   
+        if($this->session->profil==('admin') || $this->session->profil==('client'))
         {
-            $this->email->print_debugger();
+            $noProduit =(array(
+                'NOCLIENT'=>$this->input->post('noClient')));
+            $numeroCommande=$this->ModeleProduit->insererCommande(); // appel du modèle
+            $i=1;
+            foreach ($this->cart->contents() as $items):
+                $donneesAInserer['NOCOMMANDE']=$numeroCommande;
+                $donneesAInserer['NOPRODUIT']=$items['id'];
+                $donneesAInserer['QUANTITECOMMANDEE']=$items['qty'];
+                $this->ModeleProduit->insererLigneCommande($donneesAInserer);
+                ++$i;
+            endforeach;
+            
+            $this->load->library('email');
+            $this->email->from('bramkendepannage@gmail.com', 'Victor Guillemot');
+            $this->email->to('guillemotvictor@gmail.com'); 
+            $this->email->subject('Confirmation de votre commande !');
+            $this->email->message('Merci pour votre achat !A bientôt chez le Spiritueux shop !');
+    
+            if (!$this->email->send())
+            {
+                $this->email->print_debugger();
+            }
+            $this->cart->destroy();
+            redirect('/visiteur/listerLesProduits');
+            $this->load->view('templates/PiedDePage');
+        } 
+        else
+        {
+            redirect('/visiteur/seconnecter');
         }
-        $this->cart->destroy();
-        redirect('/visiteur/listerLesProduits');
-        $this->load->view('templates/PiedDePage');
-
     }
+    public function afficherAccueil()
+    {
+        $DonneesInjectees['lesProduits'] = $this->ModeleProduit->retournerProduits();
+        $DonneesInjectees['TitreDeLaPage'] = 'Tous les Produits';
+        $this->load->view('visiteur/afficherAccueil', $DonneesInjectees);
+        $this->load->view('templates/PiedDePage');
+    }
+    
     
 }  // Visiteur

@@ -34,7 +34,7 @@
                             <?php if (!is_null($this->session->email)) : ?>                     
                             <a class="dropdown-item" href=""><?php echo 'Utilisateur connecté : <B>'.$this->session->email.'</B>';?></a>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/seDeconnecter') ?>">
-                                <img src=<?php echo glyph('glyphicons-388-log-out') ?>> Log out
+                                <img src=<?php echo glyph('glyphicons-388-log-out') ?>> Se deconnecter
                             </a>
                             <?php if ($this->session->profil==('admin')) : ?>
                             <a class="dropdown-item" href="<?php echo site_url('administrateur/ajouterUnProduit') ?>">Ajouter un produit</a></a>
@@ -42,7 +42,7 @@
                             <?php endif; ?>
                             <?php else : ?>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/seConnecter') ?>">
-                                <img src=<?php echo glyph('glyphicons-387-log-in') ?>> Log in   
+                                <img src=<?php echo glyph('glyphicons-387-log-in') ?>> Se connecter   
                             </a>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/ajouterUnClient') ?>">
                                 <img src=<?php echo glyph('glyphicons-7-user-add') ?>> S'enregistrer

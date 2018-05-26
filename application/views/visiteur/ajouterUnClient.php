@@ -18,7 +18,7 @@
 <input class= "form-control" required="required" type="input" name="txtVille" value="<?php echo set_value('txtVille'); ?>" /><br/>
 
 <label for="txtCodePostal">CodePostal</label>
-<input class= "form-control" required="required" type="number" min="10000" max="99999" name="txtCodePostal" value="<?php echo set_value('txtCodePostal'); ?>" /><br/>
+<input class= "form-control" required="required"  title="Code postal pas valide !" placeholder="ex : 35230" pattern="^(([0-8][0-9])|(9[0-5])|(2[ab]))[0-9]{3}$" name="txtCodePostal" value="<?php echo set_value('txtCodePostal'); ?>" /><br/>
 
 <label for="txtEmail">Email</label>
 <input class= "form-control" required="required" type="mail" placeholder="nom@domaine.tld"  name="txtEmail" value="<?php echo set_value('txtEmail'); ?>" /><br/>

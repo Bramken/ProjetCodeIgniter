@@ -16,6 +16,7 @@
                 echo form_submit(array('type'  => 'submit','name'=>'btnConnecter','value'  => 'Se connecter','title' => 'Cliquer','class' => 'btn btn-primary'));
 
         echo form_close();
+        echo '<p>'.'Pas de compte ? '.anchor('visiteur/ajouterUnClient','créer un compte').'</p>';
         ?>
     </div>
     <div class="col"></div>
