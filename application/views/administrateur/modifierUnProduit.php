@@ -35,17 +35,16 @@
         <label for="txtQuantite">Quantité en stock</label>
         <input class= "form-control" required="required" type="number" min="0" max="100" name="txtQuantite" value="<?php echo $unProduit['QUANTITEENSTOCK']; ?>" /><br/>
 
-        <!--<label for="txtQuantite">Date d'ajout</label>
-        <input class= "form-control" required="required" type="date" name="txtDateAjout" value="<?php echo set_value('txtDateAjout'); ?>" /><br/>-->
-
         <label for="txtNomFichierImage">Nom du fichier Image</label>
         <input class= "form-control" required="required" name="txtNomFichierImage" value="<?php echo $unProduit['NOMIMAGE']; ?>" /><br/>
 
         <label for="txtDisponible">Disponibilité :</label><br/>
-        <select class="form-control" name="txtDisponible" id="Disponible" />
-            <option value="1">Disponible</option>
-            <option value="2">Indisponible</option>
-        </select><br/>
+        <?php $options = array(
+            '1'=> 'Disponible',
+            '2'=> 'Indisponible',
+            );
+        echo form_dropdown('txtDisponible', $options,$unProduit['DISPONIBLE'],'class="form-control"');
+        ?></br>
 
         <input class="btn btn-primary" type="submit" name="BoutonModifier" value="Modifier un produit" />
     </div>

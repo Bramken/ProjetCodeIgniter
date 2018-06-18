@@ -58,9 +58,9 @@ class ModeleProduit extends CI_Model
         $this->db->from('PRODUIT');
         $this->db->like ('LIBELLE',$pProduitRecherche);
         $requete = $this->db->get();
-        //$query = $this->db->query('SELECT NOPRODUIT,LIBELLE FROM PRODUIT WHERE LIBELLE LIKE $'.$pProduitRecherche.'$');
         return $requete->result_array();
     }
+
     public function insererCommande()
     {
         $noProduit =(array(
@@ -76,7 +76,7 @@ class ModeleProduit extends CI_Model
     
     public function retournerCommandes()
     {
-            $requete = $this->db->query("select NOCOMMANDE,COMMANDE.NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT ORDER BY NOCOMMANDE ASC");
+            $requete = $this->db->query("select NOCOMMANDE,COMMANDE.NOCLIENT,NOM,PRENOM,DATECOMMANDE,DATETRAITEMENT from COMMANDE, CLIENT where CLIENT.NOCLIENT=COMMANDE.NOCLIENT and DATETRAITEMENT is null ORDER BY NOCOMMANDE ASC");
             return $requete->result_array(); // retour d'un tableau associatif
     }
     public function retournerLignesCommande($pNoCommande)

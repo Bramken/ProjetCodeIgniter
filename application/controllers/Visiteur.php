@@ -198,7 +198,6 @@ class Visiteur extends CI_Controller
         if ($this->input->post('BoutonAjouter'))
         {   // formulaire non validé, on renvoie le formulaire
             $donneesAInserer = array(
-                //NOCLIENT
                 'NOM'=> $this->input->post('txtNom'),
                 'PRENOM'=> $this->input->post('txtPrenom'),
                 'ADRESSE'=> $this->input->post('txtAdresse'),
@@ -206,10 +205,16 @@ class Visiteur extends CI_Controller
                 'CODEPOSTAL'=> $this->input->post('txtCodePostal'),
                 'EMAIL'=> $this->input->post('txtEmail'),
                 'MOTDEPASSE'=> $this->input->post('txtMotDePasse'),
-            ); // NOM, PRENOM, ADRESSE : champs de la table CLIENT
-            if ($this->ModeleClient->insererUnClient($donneesAInserer)); // appel du modèle
+                'PROFIL'=>'client',
+                ); // NOM, PRENOM, ADRESSE : champs de la table CLIENT
+            if ($this->ModeleClient->insererUnClient($donneesAInserer)) // appel du modèle
             {
-                $this->load->view('administrateur/insertionReussie');   
+               // $this->load->view('visiteur/ajoutReussie'); 
+                //$this->load->view('templates/PiedDePage');  
+            }
+            else
+            {
+                //redirect('visiteur/ajouterUnClient');
             }
         }
         else
@@ -222,31 +227,40 @@ class Visiteur extends CI_Controller
     {   
         if($this->session->profil==('admin') || $this->session->profil==('client'))
         {
-            $noProduit =(array(
-                'NOCLIENT'=>$this->input->post('noClient')));
-            $numeroCommande=$this->ModeleProduit->insererCommande(); // appel du modèle
-            $i=1;
-            foreach ($this->cart->contents() as $items):
-                $donneesAInserer['NOCOMMANDE']=$numeroCommande;
-                $donneesAInserer['NOPRODUIT']=$items['id'];
-                $donneesAInserer['QUANTITECOMMANDEE']=$items['qty'];
-                $this->ModeleProduit->insererLigneCommande($donneesAInserer);
-                ++$i;
-            endforeach;
-            
-            $this->load->library('email');
-            $this->email->from('bramkendepannage@gmail.com', 'Victor Guillemot');
-            $this->email->to('guillemotvictor@gmail.com'); 
-            $this->email->subject('Confirmation de votre commande !');
-            $this->email->message('Merci pour votre achat !A bientôt chez le Spiritueux shop !');
-    
-            if (!$this->email->send())
+            if($this->cart->total_items()!=(0))
             {
-                $this->email->print_debugger();
+        
+                $noProduit =(array(
+                    'NOCLIENT'=>$this->input->post('noClient')));
+                $numeroCommande=$this->ModeleProduit->insererCommande(); // appel du modèle
+                $i=1;
+                foreach ($this->cart->contents() as $items):
+                    $donneesAInserer['NOCOMMANDE']=$numeroCommande;
+                    $donneesAInserer['NOPRODUIT']=$items['id'];
+                    $donneesAInserer['QUANTITECOMMANDEE']=$items['qty'];
+                    $this->ModeleProduit->insererLigneCommande($donneesAInserer);
+                    ++$i;
+                endforeach;
+                
+                /*$this->load->library('email');
+                $this->email->from('bramkendepannage@gmail.com', 'Spiritueux Shop');
+                $this->email->to('guillemotvictor@gmail.com'); 
+                $this->email->subject('Confirmation de votre commande !');
+                $this->email->message('Merci pour votre achat !A bientôt chez le Spiritueux shop !');
+        
+                if (!$this->email->send())
+                {
+                    $this->email->print_debugger();
+                }*/
+                $this->cart->destroy();
+                redirect('/visiteur/listerLesProduits');
+                $this->load->view('templates/PiedDePage');
             }
-            $this->cart->destroy();
-            redirect('/visiteur/listerLesProduits');
-            $this->load->view('templates/PiedDePage');
+            else
+            {
+                $this->load->view('visiteur/panierVide');
+                $this->load->view('templates/PiedDePage');
+            }
         } 
         else
         {

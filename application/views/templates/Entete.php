@@ -22,6 +22,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><img src=<?php echo glyph('glyphicons-1-glass') ?>> Produits</a>
                         <div class="dropdown-menu">
+                            <!--<a class="dropdown-item" href="<?php echo site_url('visiteur/afficherAccueil') ?>">Accueil</a>-->
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduits') ?>">Tous les Produits</a>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesProduitsAvecPagination') ?>">Lister les Produits (par 3)</a>
                             <a class="dropdown-item" href="<?php echo site_url('visiteur/listerLesCategories') ?>">Par Categories</a>
@@ -50,33 +51,7 @@
                             <?php endif; ?>                    
                         </div>
                     </li>
-                    
-                    <!--<?php if (!is_null($this->session->email)) : ?>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href=""><?php echo 'Utilisateur connecté : <B>'.$this->session->email.'</B>';?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/seDeconnecter') ?>">
-                            Log out<img src=<?php echo glyph('glyphicons-388-log-out') ?>>
-                        </a>
-                    </li>
-                    <?php if ($this->session->profil==('admin')) : ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('administrateur/ajouterUnProduit') ?>">Ajouter un produit</a></a>
-                    </li>
-                    <?php endif; ?>
-                    <?php else : ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/seConnecter') ?>">
-                            <img src=<?php echo glyph('glyphicons-387-log-in') ?>>
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/ajouterUnClient') ?>">
-                            S'engregistrer
-                        </a>
-                    </li>-->
+                                   
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('visiteur/afficherPanier') ?>">
                             <img src=<?php echo glyph('glyphicons-203-shopping-cart') ?>> Panier

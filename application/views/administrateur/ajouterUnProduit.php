@@ -39,13 +39,15 @@
         <input class= "form-control" required="required" type="date" name="txtDateAjout" value="<?php echo set_value('txtDateAjout'); ?>" /><br/>
 
         <label for="txtNomFichierImage">Nom du fichier Image</label>
-        <input class= "form-control" required="required" type="file" accept=".jpg"/><br/>
+        <input class= "form-control" name="txtNomFichierImage" required="required" type="file" accept=".jpg"/><br/>
         
         <label for="txtDisponible">Disponibilité :</label><br/>
-        <select class="form-control" name="txtDisponible" id="Disponible" />
-            <option value="1">Disponible</option>
-            <option value="2">Indisponible</option>
-        </select><br/>
+        <?php $options = array(
+            '1'=> 'Disponible',
+            '2'=> 'Indisponible',
+            );
+        echo form_dropdown('txtDisponible', $options,'1','class="form-control"');
+        ?></br>
 
         <input class="btn btn-primary" type="submit" name="BoutonAjouter" value="Ajouter un produit" />
     </div>

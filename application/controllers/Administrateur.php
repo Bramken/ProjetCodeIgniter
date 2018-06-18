@@ -16,7 +16,7 @@ class Administrateur extends CI_Controller
         accessibles qu'à l'administrateur (Nota Bene : a chaque appel
         d'une méthode d'Administrateur on a appel d'abord du constructeur */
         $this->load->library('session');
-        if ($this->session->statut==("client")) // 0 : statut visiteur
+        if ($this->session->profil!=("admin")) // 0 : statut visiteur
         {
             redirect('/visiteur/seConnecter'); // pas les droits : redirection vers connexion
         }
@@ -117,13 +117,5 @@ class Administrateur extends CI_Controller
             ++$i;
         endforeach;
         redirect('/administrateur/afficherLesCommandes');
-    }
-    public function rendreProduitIndisponible($noProduit)
-    {
-
-    }
-    public function rendreProduitDisponible($noProduit)
-    {
-        
     }
 }

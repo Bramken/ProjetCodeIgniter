@@ -16,12 +16,21 @@ class ModeleClient extends CI_Model
 
     public function insererUnClient($pDonneesAInserer)
     {
-        $this->db->query("select EMAIL from CLIENT where EMAIL ='".$pDonneesAInserer['EMAIL']."'");
-        //$this->db->where($pDonneesAInserer['EMAIL']);
-        //$this->db->from('CLIENT');
-        $inserer= $this->db->count_all_results();
+        $this->db->query("select COUNT(*) from CLIENT where EMAIL ='".$pDonneesAInserer['EMAIL']."'");
+        $this->db->where('EMAIL', $pDonneesAInserer['EMAIL']);
+        $this->db->from('CLIENT');
+        $inserer=$this->db->count_all_results();
         if($inserer==0)
-            return $this->db->insert('CLIENT', $pDonneesAInserer);
+        {
+            $this->db->insert('CLIENT', $pDonneesAInserer);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+           
+
     } // insererUnProduit
   
     public function retournerClient($pClient)
